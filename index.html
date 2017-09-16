@@ -41,21 +41,18 @@
     <!-- Any section element inside of this container is displayed as a slide -->
     <div class="slides">
         <section>
-            <h1>ES6 and You</h1>
-
+            <h2>ES6 and students of the Techno-Educational Academy</h2>
             <h3>
-                <del>Harmony</del><br />
-                <del>EcmaScript 6</del><br />
-                <del>JavaScript 2015</del>
+                <span>What is EcmaScript?</span><br />
+                <span>... new features in JavaScript</span><br />
             </h3>
-            <h4>... new features in JavaScript</h4>
 
             <p>
-                <small>
-                    Created by <a href="https://github.com/camsjams">Cameron Manavian</a> / <a href="http://twitter.com/camsjams">@camsjams</a><br/>
-                    Created by <a href="https://github.com/failpunk">Justin Vencel</a> / <a href="http://twitter.com/failpunk">@failpunk</a><br/>
-                </small>
-            </p>
+               <small>
+                   Created by Ghevond Ghazaryan<br/>
+                   Email: ghevond20@gmail.com
+               </small>
+           </p>
         </section>
 
         <section>
@@ -115,7 +112,7 @@
 
         <section>
             <section>
-                <h2>Arrow</h2>
+                <h2>Arrow </h2>
 
                 <p>
                     I make anonymous functions shorter!
@@ -165,108 +162,423 @@
             });
             </code></pre>
             </section>
-        </section>
 
+                        <section>
+                            <h2>Arrow Functions</h2>
+
+                            <p>
+                                A short hand notation for <b><i>function()</i></b>, but it does not bind <b><i>this</i></b> in the same way.
+                            </p>
+
+                            <h5>ES6</h5>
+
+                        <pre><code>
+var odds = evens.map(v => v + 1);  // no parentes and no brackets
+var nums = evens.map((v, i) => v + i);
+var pairs = evens.map(v => ({even: v, odd: v + 1}));
+
+// Statement bodies
+nums.forEach(v => {
+  if (v % 5 === 0)
+    fives.push(v);
+});
+                        </code></pre>
+                        </section>
+                        <section>
+                            <h5>Arrow Functions</h5>
+
+                            <p>
+                                How does <b><i>this</i></b> work?
+                            </p>
+                        <pre><code>var object = {
+  name: "Name",
+  arrowGetName: () => this.name,
+  regularGetName: function() { return this.name },
+  arrowGetThis: () => this,
+  regularGetThis: function() { return this }
+}
+
+console.log(this.name)
+console.log(object.arrowGetName());
+console.log(object.arrowGetThis());
+console.log(this)
+console.log(object.regularGetName());
+console.log(object.regularGetThis());
+
+  //Result
+this.name ->
+object.arrowGetName() ->
+object.arrowGetThis() -> [object Window]
+this -> [object Window]
+object.regularGetName() -> Name
+object.regularGetThis() -> {"name":"Name"}
+                        </code></pre>
+          </section>
+
+          <section>
+              <h5>Arrow Functions</h5>
+
+              <p>
+                  They work well with classes
+              </p>
+          <pre><code>class someClass {
+    constructor() {
+        this.name = "Name"
+    }
+
+    testRegular() {
+        return function() { return this }
+
+    }
+
+    testArrow() {
+        return () => this.name;
+    }
+}
+
+var obj = new someClass();
+
+console.log(obj.name);
+console.log(obj.testRegular()());
+console.log(obj.testArrow()());
+
+//Result
+obj.name -> Name
+obj.testRegular()() -> undefined
+obj.testArrow()() -> Name
+          </code></pre>
+</section>
+        </section>
         <section>
             <section>
-                <h2>Symbols and Constants</h2>
+                <h2>let</h2>
 
                 <p>
-                    The only constants are <em>const</em>
+                    ... there be <span style="color: yellow">light</span>.
                 </p>
             </section>
             <section>
-                <h2>What is a Symbol?</h2>
+                <h2>Attaching listeners in a loop</h2>
+                <p>This famous interview question will now be somewhat deprecated.</p>
+            <pre><code>
+        var list = document.getElementById('item-list');
 
-                <p>A new primitive type of course! The seventh type of value in JavaScript to be exact. They are similar to Symbols in Ruby, but are not the same exact thing.</p>
-                <pre><code>
-            var computerName = Symbol('awesome desktop');
-                </code></pre>
-            </section>
-            <section>
-                <h2>Their biggest value is that they are all unique, which make them great for unique object keys.</h2>
-
-                <p>Kind of like a UUID</p>
-    <pre><code>
-        var camsComputer = Symbol('awesome desktop');
-        var camsOtherComputer = Symbol('awesome desktop');
-        // these will not equal each other!
-        console.assert(
-            camsComputer === camsOtherComputer,
-            'these are not equal!'
+        for (var i = 1; i <= 5; i++) {
+        var item = document.createElement("LI");
+        item.appendChild(
+            document.createTextNode("Item number " + i)
         );
-        > these are not equal!
-    </code></pre>
-            </section>
-            <section>
-                <h2>Why you would use them</h2>
 
-                <pre><code>
-    var codeFromCameron = document.getElementById('code-block');
-
-    if(codeFromCameron.isComplete) {
-        deployToProduction();
-    } else {
-        sendBackToDev();
-    }
+        var j = i;
+        item.onclick = function (ev) {
+            console.log("Item " + j + " is clicked.");
+        };
+        list.appendChild(item);
+        }
             </code></pre>
-                <small>This property key is not actually unique, furthermore anyone can see, read, and possibly modify it!</small>
+                <small>On every click, it will say "Item 5 is clicked."</small>
             </section>
             <section>
-                <h2>What happens when a property key has collisions?</h2>
+                <h2>Solving the variable scope</h2>
+                <h4>ES5</h4><pre><code>
+        var list = document.getElementById('item-list');
 
-                <pre><code>
-    var codeFromCameron = document.getElementById('code-block');
-    // some unrelated key changes another developer or library makes
-    if(codeFromCameron.length > 500) {
-        codeFromCameron.isComplete = true;
-    }
-
-    // the property can be manipulated via multiple methods
-    codeFromDev.isComplete = true;    // dot notation
-    codeFromDev['isComplete'] = true; // bracket notation
-    var key = 'isComplete';
-    codeFromDev[key] = true;          // bracket notation with variables
-                </code></pre>
-                <small>Additionally, it could be changed while iterating over the object's properties via a loop.</small>
+        for (var i = 1; i <= 5; i++) {
+        var item = document.createElement('LI');
+        item.appendChild(
+            document.createTextNode('Item number ' + i)
+        );
+        (function (j) {
+            item.onclick = function (ev) {
+                console.log('Item ' + j + ' is clicked.');
+            };
+        })(i);
+        list.appendChild(item);
+        }
+            </code></pre>
             </section>
             <section>
-                <h2>Using symbols and constants</h2>
-
+                <h2>Solving the variable scope</h2>
                 <h4>ES6</h4>
-                <pre><code>
-    // create a unique symbol
-    const isComplete = Symbol("isComplete");
-    ...
-    var codeFromJustin = document.getElementById('code-block-justin');
+            <pre><code>
+        var list = document.getElementById('item-list');
 
-    if(codeFromJustin[isComplete]) {
-        deployToProduction();
-    } else {
-        sendBackToDev();
-    }
-    codeFromJustin[isComplete] != codeFromJustin.isComplete
-    codeFromJustin[isComplete] != codeFromJustin['isComplete']
+        for (var i = 1; i <= 5; i++) {
+        var item = document.createElement("LI");
+        item.appendChild(
+                document.createTextNode("Item number " + i)
+        );
+
+        let j = i;
+        item.onclick = function (ev) {
+            console.log("Item " + j + " is clicked.");
+        };
+        list.appendChild(item);
+        }
+            </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Const</h2>
+
+                <p>
+                    ... Const is for <span style="color: yellow">read-only</span> variables. .
+                </p>
+                <pre><code>
+const a = "b"
+a = "a"
+console.log(a)
+
+//result
+TypeError: Assignment to constant variable.
                 </code></pre>
-                <small><code>codeFromJustin[isComplete]</code> can only be obtained by having a reference to <code>isComplete</code></small>
             </section>
             <section>
-                <h2>Another Symbol example</h2>
+                <p>This famous interview question will now be somewhat deprecated.</p>
+            <pre><code>
+const a = { a: "a" }
+a.a = "b"
+console.log(a)
+
+//result
+a -> {"a":"b"}
+            </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>For..of</h2>
+
+                <p>
+                    ... New type of iterator, an alternative to <b><i>for..in</i></b>. It returns the values instead of the <b><i>keys</i></b>.
+                </p>
+                <pre><code>
+let list = [4, 5, 6];
+console.log(list)
+
+for (let i in list) {
+  console.log(i);
+}
+
+//result
+list -> [4,5,6]
+i -> 0
+i -> 1
+i -> 2
+                </code></pre>
+            </section>
+            <section>
+
+            <pre><code>
+let list = [4, 5, 6];
+
+console.log(list)
+
+
+for (let i of list) {
+   console.log(i);
+}
+
+//result
+list -> [4,5,6]
+i -> 4
+i -> 5
+i -> 6
+            </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Iterators</h2>
+
+                <p>
+                  <small>An object is an <b><i>iterator</i></b> when it knows how to access items from a collection one at a time, while keeping track of its current position within that sequence. In JavaScript an iterator is an object that provides a <b><i>next()</i></b> method which returns the next item in the sequence. This method returns an object with two properties:<b><i> done and value </i></b>.
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators">Source</a>
+                  </small>
+                </p>
+                <pre><code>
+function makeIterator(array){
+    var nextIndex = 0;
+
+    return {
+       next: function(){
+           return nextIndex < array.length ?
+               {value: array[nextIndex++], done: false} :
+               {done: true};
+       }
+    }
+}
+                </code></pre>
+            </section>
+            <section>
+
+            <pre><code>function makeIterator(array){
+  var nextIndex = 0;
+
+  return {
+     next: function(){
+         return nextIndex < array.length ?
+             {value: array[nextIndex++], done: false} :
+             {done: true};
+     }
+  }
+}
+var it = makeIterator(['yo', 'ya']);
+console.log(it.next().value); // 'yo'
+console.log(it.next().value); // 'ya'
+console.log(it.next().done);  // true
+            </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Classes</h2>
+
+                <p>
+                    Do you even prototype, bro?
+                </p>
+
+                <h5>ES6</h5>
+                <pre><code>
+        class Person {
+
+            constructor(name) {
+                this.name = name;
+            }
+
+            getInfo() {
+                return `My name is ${this.name}`
+            }
+        }
+                </code></pre>
 
                 <pre><code>
-log.levels = {
-    LOG: Symbol('log'),
-    INFO: Symbol('info'),
-    WARN: Symbol('warn'),
-};
-log(log.levels.INFO, 'We are 1/3 of the way through the presentation!');
-log(log.levels.WARN, 'Things are going to get a little more complicated.');
+        let Cam = new Person('Cameron');
+        Cam.getInfo();    // "My name is Cameron"
                 </code></pre>
-                <small>In older JavaScript implementations of this log class, we might have used a number or string for the log levels.</small>
+            </section>
+
+            <section>
+                <h2>Inheritance</h2>
+
+                <p>
+                    Hierarchical hell, made easy!
+                </p>
+
+
+                <pre><code>
+        class Jerk extends Person {
+
+            constructor(name) {
+                super(name);
+                this.jerk = true;
+            }
+
+            isJerk() {
+                return this.jerk;
+            }
+        }
+                </code></pre>
+
+                <pre><code>
+        let Justin = new Jerk();
+        Justin.getInfo();    // "My name is Justin"
+        Justin.isJerk();     // true
+                </code></pre>
             </section>
         </section>
 
         <section>
+            <section>
+                <h2>Set</h2>
+
+                <p>
+                    Sets as in the mathematical counterpart where all items are unique. For people who know SQL this is equivalent to distinct.
+                </p>
+            </section>
+            <section>
+                <pre><code>var set = new Set();
+set.add("Potato").add("Tomato").add("Tomato");
+console.log(set.size)
+console.log(set.has("Tomato"))
+
+for(var item of set) {
+   console.log(item)
+}
+
+// result
+set.size -> 2
+set.has("Tomato") -> true
+item -> Potato
+item -> Tomato
+                </code></pre>
+            </section>
+            <section>
+                <h2>WeakSet</h2>
+
+                <p>The WeakSet object lets you store weakly held objects in a collection. Objects without a reference will be garbage collected.</p>
+    <pre><code>var item = { a:"Potato"}
+var set = new WeakSet();
+set.add({ a:"Potato"}).add(item).add({ a:"Tomato"}).add({ a:"Tomato"});
+console.log(set.size)
+console.log(set.has({a:"Tomato"}))
+console.log(set.has(item))
+
+for(let item of set) {
+ console.log(item)
+}
+
+// result
+set.size -> undefined
+set.has({a:"Tomato"}) -> false
+set.has(item) -> true
+TypeError: set is not iterable
+    </code></pre>
+            </section>
+            <section>
+                <h2>Map</h2>
+                <p>Maps, also known as dictionaries.</p>
+                <pre><code>var map = new Map();
+map.set("Potato", 12);
+map.set("Tomato", 34);
+
+console.log(map.get("Potato"))
+
+for(let item of map) {
+   console.log(item)
+}
+
+for(let item in map) {
+   console.log(item)
+}
+
+//result
+map.get("Potato") -> 12
+item -> ["Potato",12]
+item -> ["Tomato",34]
+            </code></pre>
+
+            </section>
+            <section>
+                <p>Other types than strings can be used.</p>
+
+                <pre><code>var map = new Map();
+var key = {a: "a"}
+map.set(key, 12);
+
+
+console.log(map.get(key))
+console.log(map.get({a: "a"}))
+
+//result
+map.get(key) -> 12
+map.get({a: "a"}) -> undefined
+                </code></pre>
+            </section>
+        </section>
+
+        <!-- <section>
             <section>
                 <h2>Promises</h2>
 
@@ -396,126 +708,125 @@ log(log.levels.WARN, 'Things are going to get a little more complicated.');
             </section>
             <section data-background="http://i.giphy.com/77IsrFANBT0RO.gif">
             </section>
-        </section>
+        </section> -->
+
+
 
         <section>
             <section>
-                <h2>let</h2>
+                <h2>Destructuring</h2>
 
-                <p>
-                    ... there be <span style="color: yellow">light</span>.
-                </p>
-            </section>
-            <section>
-                <h2>Attaching listeners in a loop</h2>
-                <p>This famous interview question will now be somewhat deprecated.</p>
-            <pre><code>
-    var list = document.getElementById('item-list');
+                <small>
+                    Destructuring allows binding using pattern matching, with support for matching arrays and objects. Destructuring is fail-soft, similar to standard object lookup foo["bar"], producing undefined values when not found.
+                </small>
+                    <pre><code>var a, b, rest;
+[a, b] = [10, 20];
+console.log(a); // 10
+console.log(b); // 20
 
-    for (var i = 1; i <= 5; i++) {
-        var item = document.createElement("LI");
-        item.appendChild(
-            document.createTextNode("Item number " + i)
-        );
+[a, b, ...rest] = [10, 20, 30, 40, 50];
+console.log(a); // 10
+console.log(b); // 20
+console.log(rest); // [30, 40, 50]
 
-        var j = i;
-        item.onclick = function (ev) {
-            console.log("Item " + j + " is clicked.");
-        };
-        list.appendChild(item);
-    }
-            </code></pre>
-                <small>On every click, it will say "Item 5 is clicked."</small>
-            </section>
-            <section>
-                <h2>Solving the variable scope</h2>
-                <h4>ES5</h4><pre><code>
-    var list = document.getElementById('item-list');
+({a, b} = {a: 10, b: 20});
+console.log(a); // 10
+console.log(b); // 20
 
-    for (var i = 1; i <= 5; i++) {
-        var item = document.createElement('LI');
-        item.appendChild(
-            document.createTextNode('Item number ' + i)
-        );
-        (function (j) {
-            item.onclick = function (ev) {
-                console.log('Item ' + j + ' is clicked.');
-            };
-        })(i);
-        list.appendChild(item);
-    }
-            </code></pre>
-            </section>
-            <section>
-                <h2>Solving the variable scope</h2>
-                <h4>ES6</h4>
-            <pre><code>
-    var list = document.getElementById('item-list');
-
-    for (var i = 1; i <= 5; i++) {
-        var item = document.createElement("LI");
-        item.appendChild(
-                document.createTextNode("Item number " + i)
-        );
-
-        let j = i;
-        item.onclick = function (ev) {
-            console.log("Item " + j + " is clicked.");
-        };
-        list.appendChild(item);
-    }
-            </code></pre>
-            </section>
-        </section>
-
-        <section>
-            <section>
-                <h2>Object.assign()</h2>
-
-                <p>
-                    Extending things with other things into potentially new things
-                </p>
-            </section>
-            <section>
-                <h2>jQuery</h2>
-                    <pre><code>
-                        var o1 = { a: 1 };
-                        var o2 = { b: 2 };
-                        // clone
-                        var copy = $.extend({}, o1);
-                        console.log(copy);
-                        > { a: 1 }
-                        // merge
-                        var obj = $.extend(o1, o2);
-                        console.log(obj);
-                        > { a: 1, b: 2 }
+// Stage 3 proposal
+({a, b, ...rest} = {a: 10, b: 20, c: 30, d: 40});
                     </code></pre>
             </section>
             <section>
-                <h2>Underscore</h2>
-                    <pre><code>
-                        var o1 = { a: 1 };
-                        var o2 = { b: 2 };
-                        // clone
-                        var copy = _.extend({}, o1);
-                        // merge
-                        var obj = _.extend(o1, o2);
+                    <pre><code>var x = [1, 2, 3, 4, 5];
+var [y, z] = x;
+console.log(y); // 1
+console.log(z); // 2
                     </code></pre>
             </section>
             <section>
-                <h2>ES6</h2>
+              <h4>Basic variable assignment</h4>
+                 <pre><code>var foo = ['one', 'two', 'three'];
 
-                 <pre><code>
-                     var o1 = { a: 1 };
-                     var o2 = { b: 2 };
-                     // clone
-                     var copy = Object.assign({}, o1);
-                     // merge
-                     var obj = Object.assign(o1, o2);
+var [one, two, three] = foo;
+console.log(one); // "one"
+console.log(two); // "two"
+console.log(three); // "three"
                  </code></pre>
             </section>
-            <section data-background="http://i.giphy.com/90F8aUepslB84.gif">
+
+            <section>
+              <h4>Assignment separate from declaration</h4>
+                 <pre><code>var a, b;
+
+[a, b] = [1, 2];
+console.log(a); // 1
+console.log(b); // 2
+                 </code></pre>
             </section>
+
+            <section>
+              <h4>Default values</h4>
+                 <pre><code>var a, b;
+
+[a=5, b=7] = [1];
+console.log(a); // 1
+console.log(b); // 7
+                 </code></pre>
+            </section>
+            <section>
+              <h4>Swapping variables</h4>
+                 <pre><code>var a = 1;
+var b = 3;
+
+[a, b] = [b, a];
+console.log(a); // 3
+console.log(b); // 1
+                 </code></pre>
+            </section>
+            <section>
+              <h4>Parsing an array returned from a function</h4>
+                 <pre><code>function f() {
+  return [1, 2];
+}
+
+var a, b;
+[a, b] = f();
+console.log(a); // 1
+console.log(b); // 2
+                 </code></pre>
+            </section>
+            <section>
+              <h4>Ignoring some returned values</h4>
+                 <pre><code>function f() {
+  return [1, 2, 3];
+}
+
+var [a, , b] = f();
+console.log(a); // 1
+console.log(b); // 3
+                 </code></pre>
+                 <small>You can also ignore all returned values:</small>
+                 <pre><code>[,,] = f();
+                 </code></pre>
+            </section>
+
+            <section>
+              <h4>Assigning the rest of an array to a variable</h4>
+                 <pre><code>var [a, ...b] = [1, 2, 3];
+console.log(a); // 1
+console.log(b); // [2, 3]
+                 </code></pre>
+            </section>
+            <section>
+              <small>Note that a SyntaxError will be thrown if a trailing comma is used on the left-hand side with a rest element:</small>
+                 <pre><code>var [a, ...b,] = [1, 2, 3];
+// SyntaxError: rest element may not have a trailing comma
+                 </code></pre>
+                 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment">Source</a>
+            </section>
+            <!-- <section data-background="http://i.giphy.com/90F8aUepslB84.gif">
+            </section> -->
         </section>
 
         <section>
@@ -537,240 +848,34 @@ console.log(msg);  // "Justin your total is: 30 (31.5 + tax)"
             </section>
 
             <section>
-                <h2>Angular Inline Templates</h2>
+                <small>
+                  Template strings provide syntactic sugar for constructing strings. This is similar to string interpolation features in Perl, Python and more. Optionally, a tag can be added to allow the string construction to be customized, avoiding injection attacks or constructing higher level data structures from string contents.
+                </small>
+                <pre><code>// Basic literal string creation
+`In JavaScript '\n' is a line-feed.`
 
-                <p>
-                    Multi-line template strings
-                </p>
+// Multiline strings
+`In JavaScript this is
+ not legal.`
 
-                <h5>ES6</h5>
-                <pre><code>
-    template: `
-        <div class="my-directive-template">
-            <h1>Using multi-line Strings for templates</h1>
-            <p>
-                The {{::name}} of something
-            </p>
-        </div>
-        `,
+// String interpolation
+var name = "Bob", time = "today";
+`Hello ${name}, how are you ${time}?`
+
+// Construct an HTTP request prefix is used to interpret the replacements and construction
+POST`http://foo.org/bar?a=${a}&b=${b}
+     Content-Type: application/json
+     X-Credentials: ${credentials}
+     { "foo": ${foo},
+       "bar": ${bar}}`(myOnReadyStateChangeHandler);
                 </code></pre>
             </section>
         </section>
-
-        <section>
-            <section>
-                <h2>Classes</h2>
-
-                <p>
-                    Do you even prototype, bro?
-                </p>
-
-                <h5>ES6</h5>
-                <pre><code>
-        class Person {
-
-            constructor(name) {
-                this.name = name;
-            }
-
-            getInfo() {
-                return `My name is ${this.name}`
-            }
-        }
-                </code></pre>
-
-                <pre><code>
-        let Cam = new Person('Cameron');
-        Cam.getInfo();    // "My name is Cameron"
-                </code></pre>
-            </section>
-
-            <section>
-                <h2>Inheritance</h2>
-
-                <p>
-                    Hierarchical hell, made easy!
-                </p>
-
-                <h5>ES6</h5>
-                <pre><code>
-        class Jerk extends Person {
-
-            constructor(name) {
-                super(name);
-                this.jerk = true;
-            }
-
-            isJerk() {
-                return this.jerk;
-            }
-        }
-                </code></pre>
-
-                <pre><code>
-        let Justin = new Jerk();
-        Justin.getInfo();    // "My name is Justin"
-        Justin.isJerk();     // true
-                </code></pre>
-            </section>
-
-            <section>
-                <h2>Angular Services</h2>
-                <p>
-                    We now use a service, not factory
-                </p>
-
-                <pre><code>
-        app.service('DataService', require('./DataService'));
-
-        // or
-
-        import { DataService } from './DataService';
-        app.service('DataService', DataService);
-                </code></pre>
-
-            </section>
-
-            <section>
-                <h2>
-                    Writing Services
-                </h2>
-                <h5>Using an ES6 Class</h5>
-                <pre><code>
-        class DataService {
-
-            constructor($http) {
-                this.$http = $http;
-            }
-
-            getPapers() {
-                return this.$http.get('/api/papers')
-                    .then((response) => response.data);
-            }
-        }
-
-        DataService.$inject = ['$http'];
-        module.exports = DataService;
-                </code></pre>
-            </section>
-
-            <section>
-            <h2>
-                Service Dependencies
-            </h2>
-            <h5>We can have many of these</h5>
-                <pre><code>
-    class SomeService {
-
-        constructor($http, $q, $log, Dep1, Dep2, Dep3) {
-            this.$http = $http;
-            this.$q = $q;
-            this.$log = $log;
-            this.Dep1 = Dep1;
-            this.Dep2 = Dep2;
-            this.Dep3 = Dep3;
-        }
-    }
-
-    // Too redundant
-                </code></pre>
-            </section>
-
-            <section>
-                <h2>
-                    A constructor shortcut
-                </h2>
-                <h5>Hey...remember me??</h5>
-                <pre><code>
-    class SomeService {
-
-        constructor($http, $q, $log, Dep1, Dep, Dep3) {
-            Object.assign(this, { $http, $q, $log, Dep1, Dep, Dep3 });
-        }
-    }
-
-    // Better
-                </code></pre>
-            </section>
-        </section>
-
-        <section>
-            <section>
-                <h2>Default Parameters</h2>
-                <p>So very convenient</p>
-
-                <h5>ES6</h5>
-            <pre><code>
-            function f(x, y = 7, z = 42) {
-                return x + y + z;
-            }
-            </code></pre>
-
-                <h5>ES5</h5>
-            <pre><code>
-            function f (x, y, z) {
-                if (y === undefined)
-                    y = 7;
-                if (z === undefined)
-                    z = 42;
-                return x + y + z;
-            }
-            </code></pre>
-            </section>
-
-            <section>
-                <h2>Destructuring Assignment</h2>
-                <p> destructuring of Arrays into individual variables</p>
-
-                <h5>ES6</h5>
-                <pre><code>
-            var list = [ 1, 2, 3 ];
-            var [ a, , b ] = list;
-            [ b, a ] = [ a, b ];
-                </code></pre>
-
-                <h5>ES5</h5>
-                <pre><code>
-            var list = [ 1, 2, 3 ];
-            var a = list[0], b = list[2];
-            var tmp = a;
-            a = b;
-            b = tmp;
-                </code></pre>
-            </section>
-
-            <section>
-                <h2>Destructuring Assignment</h2>
-                <p>Fail-soft destructuring, optionally with defaults.</p>
-
-                <h5>ES6</h5>
-                <pre><code>
-    var list = [ 7 ];
-    var [ a = 1, b = 3, c ] = list;
-    a === 7
-    b === 3
-    c === undefined
-                </code></pre>
-
-                <h5>ES5</h5>
-                <pre><code>
-    var list = [ 7 ];
-    var a = typeof list[0] !== "undefined" ? list[0] : 1;
-    var b = typeof list[1] !== "undefined" ? list[1] : 3;
-    var c = typeof list[2] !== "undefined" ? gslist[2] : undefined;
-    a === 7;
-    b === 3;
-    c === undefined;
-                </code></pre>
-            </section>
-        </section>
-
-
         <section style="text-align: left;">
             <h1>THE END</h1>
 
             <p>
-                - <a href="https://github.com/camsjams/es6-presentation">Source</a>
+                - <a href="https://github.com/ghevond20/es6-presentation">Source</a>
             </p>
         </section>
 
