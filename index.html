@@ -871,6 +871,322 @@ POST`http://foo.org/bar?a=${a}&b=${b}
                 </code></pre>
             </section>
         </section>
+        <section>
+            <section>
+                <h2>Callback functions</h2>
+
+                <p>
+                    Understand JavaScript Callback Functions
+                </p>
+
+                <pre><code>function greeting(name) {
+  alert('Hello ' + name);
+}
+
+function processUserInput(callback) {
+  var name = prompt('Please enter your name.');
+  callback(name);
+}
+
+processUserInput(greeting);                </code></pre>
+            </section>
+
+            <section>
+                <pre><code>function do_a(){
+  console.log( '`do_a`: this comes out first');
+}
+
+function do_b(){
+  console.log( '`do_b`: this comes out later' );
+}
+
+do_a();
+do_b();
+
+//result
+`do_a`: this comes out first
+`do_b`: this comes out later
+                </code></pre>
+            </section>
+
+            <section>
+                <pre><code>function do_a(){
+  // simulate a time consuming function
+  setTimeout( function(){
+    console.log( '`do_a`: this takes longer than `do_b`' );
+  }, 1000 );
+}
+ 
+function do_b(){
+  console.log( '`do_b`: this is supposed to come out after `do_a` but it comes out before `do_a`' );
+}
+ 
+do_a();
+do_b();
+
+//result
+`do_b`: this is supposed to come out after `do_a` but it comes out before `do_a`
+`do_a`: this takes longer than `do_b`
+                </code></pre>
+            </section>
+            <section>
+              <small>So how do we make sure do_b comes out after do_a in that situation? This is where callbacks comes in handy.</small>
+                <pre><code>function do_a( callback ){
+  setTimeout( function(){
+    // simulate a time consuming function
+    console.log( '`do_a`: this takes longer than `do_b`' );
+
+    // if callback exist execute it
+    callback && callback();
+  }, 3000 );
+}
+
+function do_b(){
+  console.log( '`do_b`: now we can make sure `do_b` comes out after `do_a`' );
+}
+
+do_a( function(){
+  do_b();
+});
+
+//result
+`do_a`: this takes longer than `do_b`
+`do_b`: now we can make sure `do_b` comes out after `do_a`
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+            <h2>Promise</h2>
+            </section>
+            <section data-background="https://hsto.org/files/eb6/f44/e8d/eb6f44e8d7664f0f97fd5a4879daa16b.png">
+
+            </section>
+            <section>
+            <h2>Promise</h2>
+
+            <pre><code> var promise = new Promise(function (resolve, reject) {
+      // do a thing, possibly async, then…
+
+      if (/* everything turned out fine */) {
+        resolve("Stuff worked!");
+      }
+      else {
+        reject(Error("It broke"));
+      }
+});</code></pre>
+  </section>
+  <section>
+  <h2>Instance methods</h2>
+
+  <pre><code>var fetchData = new Promise(function (resolve, reject) {
+    // do AJAX request and then...
+    resolve(response);
+});
+
+fetchData().then( /* handle response */ )</code></pre>
+</section>
+<section>
+<h2>Instance methods</h2>
+
+<pre><code>var fetchData = new Promise(function (resolve, reject) {
+...
+});
+
+fetchData()
+.then(function (response) { return JSON.parse(response); }
+.then(function (json) { /* do something with parsed response */ })</code></pre>
+</section>
+<section>
+<h2>Instance methods</h2>
+
+<pre><code> var fetchData = new Promise(function (resolve, reject) {
+  ...
+});
+
+fetchData()
+.then(JSON.parse)
+.then(function (json) { /* do something with parsed response */ })</code></pre>
+</section>
+<section>
+<h2>Instance methods</h2>
+
+<pre><code>var fetchData = new Promise(function (resolve, reject) {
+  ...
+});
+
+fetchData()
+.then(JSON.parse)
+.catch(function (error) {
+  /* handle error */
+});</code></pre>
+</section>
+<section>
+<h2>Error handling</h2>
+
+<pre><code>fetchData()
+.then(
+  function (response) {
+    console.log("Success!", response);
+  },
+  function (error) {
+    console.log("Failed!", error);
+  }
+);
+</code></pre>
+</section>
+<section>
+<h2>Error handling</h2>
+
+<pre><code>fetchData()
+.then(function (response) {
+  console.log("Success!", response);
+})
+.catch(function (error) {
+  console.log("Failed!", error);
+});
+</code></pre>
+</section>
+<section>
+<h2>Error handling</h2>
+
+<pre><code>var promise = new Promise(function (resolve, reject) {
+  resolve(JSON.parse("This ain't JSON"));
+});
+
+promise.then(function (data) {
+  // This never happens:
+  console.log("It worked!", data);
+}).catch(function (err) {
+  // Instead, this happens:
+  console.log("It failed!", err);
+});
+</code></pre>
+</section>
+<section>
+<h2>Simple Promise implementation</h2>
+
+<pre><code>// Self implementation of promise!
+var Promise = function (callback) {
+  var self = this
+  this.__error
+  this.__result
+
+  this.resolve = function (result) {
+    self.__result = result
+    return this
+  }
+
+  this.reject = function (err) {
+    console.log('  this.reject')
+    self.__error = err
+    return self
+  }
+
+  this.then = function (tCallback) {
+    console.log('  this.then')
+    if (self.__error) {
+      return self
+    }
+
+    self.__result = tCallback(self.__result)
+    return self
+  }
+
+  this.catch = function (cCallback) {
+    console.log('  this.catch')
+    if (self.__error) {
+      cCallback(self.__error)
+    }
+    return self
+  }
+
+  this.__initialCall = function () {
+    console.log('  this.__initialCall')
+    callback(self.resolve, self.reject)
+    return this
+  }
+
+  return this.__initialCall()
+}
+
+Promise.all = function (promises) {
+  return new Promise(function (resolve, reject) {
+    var rejected = false
+    var pending = promises.length
+    var results = new Array(pending)
+    promises.map((promise, i) => {
+      promise().then(function (result) {
+        --pending
+        results[i] = result
+        if (!pending) {
+          resolve(results)
+        }
+      }).catch(function (err) {
+        pending = Infinity
+        if (rejected) {
+          // do nothing
+        } else {
+          rejected = true
+          reject(err)
+        }
+      })
+    })
+  })
+}
+
+// Assume we have some callback function that sometimes returns error
+function someCallBackFunction (options, cb) {
+  if (parseInt(Math.random() * 10, 10) % 2 === 0) {
+    var data = {status: 'ok'}
+    cb(null, data)
+  } else {
+    cb('Something wired happened!')
+  }
+}
+
+// Let's promisify this function
+function callbackFunction2Promise () {
+  return new Promise(function (resolve, reject) {
+    someCallBackFunction({}, function (err, data) {
+      if (err) {
+        reject(new Error(err))
+      } else {
+        resolve(data)
+      }
+    })
+  })
+}
+
+// Call it !
+callbackFunction2Promise().then(data => {
+  console.log(data)
+}).then(data => {
+  console.log(data) // undefined, cos nothing is returned from previous then
+  return 1
+}).then(data => {
+  console.log(data) // 1
+}).catch(err => {
+  console.log(err.stack)
+})
+
+// Promise all test!
+Promise.all([
+  callbackFunction2Promise,
+  callbackFunction2Promise,
+  callbackFunction2Promise]).then(results => {
+    console.log('Promise All results')
+    console.log(results)
+  }).catch(err => {
+    console.log('Promise All err')
+    console.log(err)
+  })
+</code></pre>
+</section>
+        </section>
+
+
         <section style="text-align: left;">
             <h1>THE END</h1>
 
